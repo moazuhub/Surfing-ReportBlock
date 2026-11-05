@@ -1,0 +1,15 @@
+# Surfing-ReportBlock
+# Category: Analytics
+# Purpose: Application analytics and usage statistics
+#
+# Mihomo rule format: classical
+#
+# Safety policy:
+# 1. Only add verified analytics and tracking domains.
+# 2. Preserve crash reporting when required by applications.
+# 3. Do not block login, payment or authentication services.
+# 4. Do not block push notifications or DNS services.
+# 5. Do not block banking, gaming or system services.
+#
+# No blocking rules are enabled yet.
+# This file intentionally contains comments only.
