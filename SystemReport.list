@@ -1,0 +1,15 @@
+# Surfing-ReportBlock
+# Category: SystemReport
+# Purpose: System report and diagnostic telemetry blocking
+#
+# Mihomo rule format: classical
+#
+# Safety policy:
+# 1. Only add verified telemetry/reporting domains.
+# 2. Do not block system update services.
+# 3. Do not block push notification services.
+# 4. Do not block DNS, IMS, VoWiFi or carrier services.
+# 5. Do not block banking, payment, authentication or gaming services.
+#
+# No blocking rules are enabled yet.
+# This file intentionally contains comments only.
