@@ -1,0 +1,15 @@
+# Surfing-ReportBlock
+# Category: AppTelemetry
+# Purpose: Application telemetry and diagnostic reporting
+#
+# Mihomo rule format: classical
+#
+# Safety policy:
+# 1. Only add verified application telemetry domains.
+# 2. Do not block application core APIs.
+# 3. Preserve login, payment and authentication.
+# 4. Preserve push notifications and DNS.
+# 5. Preserve banking, gaming and carrier services.
+#
+# No blocking rules are enabled yet.
+# This file intentionally contains comments only.
