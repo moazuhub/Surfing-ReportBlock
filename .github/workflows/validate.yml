@@ -1,0 +1,83 @@
+
+name: Validate Rule Lists
+
+on:
+  push:
+    paths:
+      - 'SystemReport.list'
+      - 'Analytics.list'
+      - 'AdSDK.list'
+      - 'AppTelemetry.list'
+      - '.github/workflows/validate.yml'
+  pull_request:
+    paths:
+      - 'SystemReport.list'
+      - 'Analytics.list'
+      - 'AdSDK.list'
+      - 'AppTelemetry.list'
+      - '.github/workflows/validate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate rule files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+
+          files = [
+              "SystemReport.list",
+              "Analytics.list",
+              "AdSDK.list",
+              "AppTelemetry.list",
+          ]
+
+          allowed = {
+              "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD",
+              "DOMAIN-REGEX", "IP-CIDR", "IP-CIDR6",
+              "SRC-IP-CIDR", "SRC-IP-CIDR6",
+              "GEOIP", "GEOSITE", "DST-PORT", "SRC-PORT",
+              "IN-PORT", "PROCESS-NAME", "PROCESS-PATH",
+              "NETWORK", "RULE-SET", "AND", "OR", "NOT",
+          }
+
+          errors = []
+
+          for filename in files:
+              path = Path(filename)
+
+              if not path.is_file():
+                  errors.append(f"{filename}: file missing")
+                  continue
+
+              for number, raw in enumerate(
+                  path.read_text(encoding="utf-8").splitlines(), 1
+              ):
+                  line = raw.strip()
+
+                  if not line or line.startswith("#"):
+                      continue
+
+                  parts = [item.strip() for item in line.split(",")]
+
+                  if len(parts) < 2 or parts[0] not in allowed:
+                      errors.append(
+                          f"{filename}:{number}: invalid rule format: {line}"
+                      )
+
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+
+          print("All rule files passed basic format validation.")
+          PY
