@@ -1,0 +1,15 @@
+# Surfing-ReportBlock
+# Category: AdSDK
+# Purpose: Verified third-party advertising SDK domains
+#
+# Mihomo rule format: classical
+#
+# Safety policy:
+# 1. Only add verified advertising SDK domains.
+# 2. Avoid blocking normal application APIs.
+# 3. Preserve login, payment and authentication.
+# 4. Preserve system push and update services.
+# 5. Avoid false positives affecting banking and games.
+#
+# No blocking rules are enabled yet.
+# This file intentionally contains comments only.
