@@ -33,6 +33,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           import sys
 
           files = [
@@ -42,16 +43,20 @@ jobs:
               "AppTelemetry.list",
           ]
 
-          allowed = {
-              "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD",
-              "DOMAIN-REGEX", "IP-CIDR", "IP-CIDR6",
-              "SRC-IP-CIDR", "SRC-IP-CIDR6",
-              "GEOIP", "GEOSITE", "DST-PORT", "SRC-PORT",
-              "IN-PORT", "PROCESS-NAME", "PROCESS-PATH",
-              "NETWORK", "RULE-SET", "AND", "OR", "NOT",
+          allowed = {"DOMAIN", "DOMAIN-SUFFIX"}
+          blocked_suffixes = {
+              "com", "net", "org", "edu", "gov",
+              "cn", "uk", "jp", "io", "co.uk"
           }
 
+          domain_pattern = re.compile(
+              r"^(?=.{1,253}$)"
+              r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+"
+              r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"
+          )
+
           errors = []
+          seen = {}
 
           for filename in files:
               path = Path(filename)
@@ -60,24 +65,77 @@ jobs:
                   errors.append(f"{filename}: file missing")
                   continue
 
+              source = ""
+              purpose = ""
+
               for number, raw in enumerate(
                   path.read_text(encoding="utf-8").splitlines(), 1
               ):
                   line = raw.strip()
 
-                  if not line or line.startswith("#"):
+                  if not line:
+                      continue
+
+                  if line.startswith("#"):
+                      comment = line[1:].strip()
+
+                      if comment.lower().startswith("source:"):
+                          source = comment[7:].strip()
+
+                      elif comment.lower().startswith("purpose:"):
+                          purpose = comment[8:].strip()
+
                       continue
 
                   parts = [item.strip() for item in line.split(",")]
 
-                  if len(parts) < 2 or parts[0] not in allowed:
+                  if len(parts) != 2 or parts[0] not in allowed:
                       errors.append(
-                          f"{filename}:{number}: invalid rule format: {line}"
+                          f"{filename}:{number}: unsupported rule: {line}"
                       )
+                      continue
+
+                  rule_type, domain = parts
+                  domain = domain.lower().rstrip(".")
+
+                  if not domain_pattern.fullmatch(domain):
+                      errors.append(
+                          f"{filename}:{number}: invalid domain: {domain}"
+                      )
+                      continue
+
+                  if rule_type == "DOMAIN-SUFFIX" and domain in blocked_suffixes:
+                      errors.append(
+                          f"{filename}:{number}: overly broad suffix: {domain}"
+                      )
+
+                  if not source.startswith("https://"):
+                      errors.append(
+                          f"{filename}:{number}: missing HTTPS source comment"
+                      )
+
+                  if len(purpose) < 8:
+                      errors.append(
+                          f"{filename}:{number}: missing purpose explanation"
+                      )
+
+                  key = (rule_type, domain)
+
+                  if key in seen:
+                      errors.append(
+                          f"{filename}:{number}: duplicate rule, "
+                          f"also in {seen[key]}"
+                      )
+                  else:
+                      seen[key] = filename
+
+                  source = ""
+                  purpose = ""
 
           if errors:
               print("\n".join(errors))
               sys.exit(1)
 
-          print("All rule files passed basic format validation.")
+          print("All rule files passed enhanced validation.")
+          print(f"Validated {len(seen)} rules.")
           PY
