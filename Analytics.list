@@ -1,3 +1,4 @@
+
 # Surfing-ReportBlock
 # Category: Analytics
 # Purpose: Application analytics and usage statistics
@@ -11,5 +12,52 @@
 # 4. Do not block push notifications or DNS services.
 # 5. Do not block banking, gaming or system services.
 #
-# No blocking rules are enabled yet.
-# This file intentionally contains comments only.
+# Candidate review policy:
+# Candidate entries below are comments only.
+# They do NOT create active Mihomo blocking rules.
+# Do not uncomment until source verification and device testing are complete.
+#
+# --------------------------------------------------
+# HeyTap / OPPO telemetry candidates
+# Origin: User-provided hosts configuration
+# Independent upstream verification: Pending
+# Device observation: Pending
+#
+# Candidate: saot.heytap.com
+# Purpose: Possible system telemetry / reporting endpoint
+# Risk: Medium; actual function requires verification
+#
+# Candidate: metrics.heytap.com
+# Purpose: Possible metrics collection endpoint
+# Risk: Medium; actual function requires verification
+#
+# Candidate: log.heytap.com
+# Purpose: Possible system log reporting endpoint
+# Risk: Medium; may affect diagnostic reporting
+#
+# Candidate: log.oppomobile.com
+# Purpose: Possible OPPO system log reporting endpoint
+# Risk: Medium; may affect diagnostic reporting
+#
+# Candidate: track.oppomobile.com
+# Purpose: Possible tracking / usage statistics endpoint
+# Risk: Medium; actual function requires verification
+#
+# Candidate: analytics.oppomobile.com
+# Purpose: Possible analytics collection endpoint
+# Risk: Medium; actual function requires verification
+#
+# --------------------------------------------------
+# Excluded from Analytics pending separate review:
+# httpdns.ocloud.oppomobile.com
+# icota-service-eu.allawnos.com
+# push.heytap.com
+#
+# Advertising candidates belong in AdSDK.list, not Analytics.list:
+# ads.oppomobile.com
+# adsfs.oppomobile.com
+# adx.ads.oppomobile.com
+# ads.heytapmobile.com
+# hotapps.heytapmobi.com
+#
+# No active blocking rules are enabled yet.
